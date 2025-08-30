@@ -1,75 +1,13 @@
-// src/main.tsx
-import React from "react";
-import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { StrictMode } from "react";
+import ReactDOM from "react-dom/client";
+import { RouterProvider } from "react-router-dom";
 
-import "./index.css"; // Tailwind
+import "./index.css";
 
-import App from "./App";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import { router } from "./App";
 
-import SobreNos from "./pages/SobreNos";
-import Menus from "./pages/Menus";
-import Galeria from "./pages/Galeria";
-import Contato from "./pages/Contato";
-
-
-type PageWithNavbarProps = React.PropsWithChildren<{}>;
-
-function PageWithNavbar({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <Navbar smallLogoOpacity={1} brandShift={1} centerBrandOpacity={0} />
-      <div style={{ height: 112 }} />
-      <main className="flex-1">{children}</main>
-      <Footer />
-    </div>
-  );
-}
-
-const container = document.getElementById("root");
-if (!container) {
-  throw new Error("Root container #root not found");
-}
-createRoot(container).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route
-          path="/sobre-nos"
-          element={
-            <PageWithNavbar>
-              <SobreNos />
-            </PageWithNavbar>
-          }
-        />
-        <Route
-          path="/menus"
-          element={
-            <PageWithNavbar>
-              <Menus />
-            </PageWithNavbar>
-          }
-        />
-        <Route
-          path="/galeria"
-          element={
-            <PageWithNavbar>
-              <Galeria />
-            </PageWithNavbar>
-          }
-        />
-        <Route
-          path="/contato"
-          element={
-            <PageWithNavbar>
-              <Contato />
-            </PageWithNavbar>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
-  </React.StrictMode>
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+      <RouterProvider router={router} />
+  </StrictMode>
 );

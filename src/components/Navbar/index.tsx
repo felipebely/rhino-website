@@ -10,11 +10,11 @@ type NavbarProps = {
 
 type AppLink = { to: string; label: string };
 
-export default function Navbar({
+export const Navbar = ({
   smallLogoOpacity = 0,
   brandShift = 0,
   centerBrandOpacity = 1,
-}: NavbarProps) {
+}: NavbarProps) => {
   const { pathname } = useLocation();
   const isHome = pathname === "/";
 

@@ -1,12 +1,9 @@
-// components/Footer.tsx
-import React from "react";
-
 type FooterProps = {
   /** Extra white space above the footer (in pixels). Default: 110 */
   topGap?: number;
 };
 
-export default function Footer({ topGap = 220 }: FooterProps) {
+export const Footer = ({ topGap = 220 }: FooterProps) => {
   return (
     <>
       {/* White space above the footer */}
