@@ -6,7 +6,7 @@ export function HeroSection({
   imageOpacity: number;
 }) {
   return (
-    <div className="bg-white min-h-screen relative" ref={containerRef}>
+    <div className="bg-white relative" ref={containerRef}>
       {/* Fixed hero under the rising content */}
       <div className="fixed inset-0 z-20 pointer-events-none">
         <div className="absolute inset-0 flex items-center justify-center">
