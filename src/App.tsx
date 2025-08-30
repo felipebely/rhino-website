@@ -10,9 +10,9 @@ type CSSVars = React.CSSProperties & Record<string, string | number>;
 function FadeInImg({
   src,
   alt,
-  className,     // wrapper classes (use the SAME classes your <div> had)
-  imgClassName,  // <img> classes (use the SAME classes your <img> had)
-  style,         // wrapper style (pass your CSSVars/inline style here)
+  className,
+  imgClassName,
+  style,
   loading = "lazy",
 }: {
   src: string;
@@ -89,7 +89,7 @@ export default function App() {
       const el = videoWrapRef.current;
       if (el) {
         const rect = el.getBoundingClientRect();
-        const factor = -0.9; // strong depth
+        const factor = -0.9; // parallax depth
         setVideoParallax(rect.top * factor);
       }
     };
@@ -188,13 +188,13 @@ export default function App() {
   const PIC2_TOP_OFFSET = PIC1_H / 3;
 
   // Row 2
-  const PIC5_H = FIVE_SIXTHS; // Camarões — taller
+  const PIC5_H = FIVE_SIXTHS; // Camarões
   const PIC4_H = TWO_THIRDS; // Bolo
   const PIC4_TOP_OFFSET = PIC5_H / 3;
 
   // Row 3
   const PIC3_H = TWO_THIRDS; // Lombo
-  const PIC6_H = FIVE_SIXTHS; // Pêssegos — taller
+  const PIC6_H = FIVE_SIXTHS; // Pêssegos
   const PIC6_TOP_OFFSET = PIC3_H / 3;
 
   return (
@@ -304,7 +304,7 @@ export default function App() {
 
                 {/* ---------- ROW 2 (pics 5 & 4) ---------- */}
                 <div className="grid grid-cols-1 md:grid-cols-[minmax(5vw,1fr)_minmax(28vw,34vw)_minmax(9vw,12vw)_minmax(30vw,38vw)_minmax(5vw,1fr)] items-start gap-y-10 md:gap-y-0">
-                  {/* pic_5 — Camarões (taller, 5/6) */}
+                  {/* pic_5 — Camarões (5/6) */}
                   <figure className="group md:col-start-2 md:col-end-3 flex flex-col items-center md:items-start">
                     <FadeInImg
                       src="/pictures/pic_5.jpg"
@@ -352,7 +352,7 @@ export default function App() {
 
                 {/* ---------- ROW 3 (pics 3 & 6) ---------- */}
                 <div className="grid grid-cols-1 md:grid-cols-[minmax(5vw,1fr)_minmax(30vw,36vw)_minmax(9vw,12vw)_minmax(30vw,38vw)_minmax(5vw,1fr)] items-start gap-y-10 md:gap-y-0">
-                  {/* pic_3 — Lombo (2/3), holds left rhythm */}
+                  {/* pic_3 — Lombo (2/3)*/}
                   <figure className="group md:col-start-2 md:col-end-3 flex flex-col items-center md:items-start">
                     <FadeInImg
                       src="/pictures/pic_3.jpg"
@@ -374,7 +374,7 @@ export default function App() {
                     </figcaption>
                   </figure>
 
-                  {/* pic_6 — Pêssegos (taller, 5/6), dropped by one-third of pic_3 */}
+                  {/* pic_6 — Pêssegos (5/6), dropped by one-third of pic_3 */}
                   <figure className="group md:col-start-4 md:col-end-5 flex flex-col items-center md:items-end">
                     <FadeInImg
                       src="/pictures/pic_6.jpg"
