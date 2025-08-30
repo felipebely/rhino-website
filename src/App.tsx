@@ -1,10 +1,74 @@
-// App.tsx
+// src/App.tsx
 import { useEffect, useRef, useState } from "react";
 import type React from "react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
 type CSSVars = React.CSSProperties & Record<string, string | number>;
+
+/** Fade-in image: starts gray & hidden, fades in when intersecting AND loaded */
+function FadeInImg({
+  src,
+  alt,
+  className,     // wrapper classes (use the SAME classes your <div> had)
+  imgClassName,  // <img> classes (use the SAME classes your <img> had)
+  style,         // wrapper style (pass your CSSVars/inline style here)
+  loading = "lazy",
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+  imgClassName?: string;
+  style?: React.CSSProperties;
+  loading?: "eager" | "lazy";
+}) {
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const [inView, setInView] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            setInView(true);
+            io.unobserve(e.target);
+          }
+        }
+      },
+      { root: null, rootMargin: "0px 0px -10% 0px", threshold: 0.15 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div ref={wrapperRef} className={`bg-neutral-300 ${className ?? ""}`} style={style}>
+      {inView && (
+        <img
+          src={src}
+          alt={alt}
+          loading={loading}
+          onLoad={() => setLoaded(true)}
+          className={[
+            imgClassName ?? "",
+            "transition-opacity duration-300 ease-out",
+            loaded ? "opacity-100" : "opacity-0",
+          ].join(" ")}
+          style={{
+            filter: loaded ? "none" : "grayscale(100%)",
+            willChange: "opacity, filter",
+          }}
+        />
+      )}
+    </div>
+  );
+}
 
 export default function App() {
   const FOOTER_H = 224; // matches Footer height (2 × navbar)
@@ -194,22 +258,18 @@ export default function App() {
                 <div className="grid grid-cols-1 md:grid-cols-[minmax(5vw,1fr)_minmax(30vw,38vw)_minmax(9vw,12vw)_minmax(28vw,34vw)_minmax(5vw,1fr)] items-start gap-y-10 md:gap-y-0">
                   {/* pic_1 (hero) */}
                   <figure className="group md:col-start-2 md:col-end-3 flex flex-col items-center md:items-start">
-                    <div
+                    <FadeInImg
+                      src="/pictures/pic_1.jpg"
+                      alt="pic_1"
                       className="relative w-[92vw] md:w-full overflow-hidden h-[var(--h-sm)] md:h-[var(--h)]"
+                      imgClassName="absolute inset-0 w-full h-full object-cover"
                       style={
                         {
                           ["--h-sm"]: `${MOBILE_H}vw`,
                           ["--h"]: `${PIC1_H}vw`,
                         } as CSSVars
                       }
-                    >
-                      <img
-                        src="/pictures/pic_1.jpg"
-                        alt="pic_1"
-                        className="absolute inset-0 w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
+                    />
                     <figcaption
                       className="mt-3 text-base opacity-100 md:opacity-0 md:translate-y-1 md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300 ease-out select-none text-left w-full"
                       style={captionStyle}
@@ -220,8 +280,11 @@ export default function App() {
 
                   {/* pic_2 */}
                   <figure className="group md:col-start-4 md:col-end-5 flex flex-col items-center md:items-end">
-                    <div
+                    <FadeInImg
+                      src="/pictures/pic_2.jpg"
+                      alt="pic_2"
                       className="relative w-[92vw] md:w-full overflow-hidden h-[var(--h-sm)] md:h-[var(--h)] mt-0 md:mt-[var(--mt)]"
+                      imgClassName="absolute inset-0 w-full h-full object-cover"
                       style={
                         {
                           ["--h-sm"]: `${MOBILE_H}vw`,
@@ -229,14 +292,7 @@ export default function App() {
                           ["--mt"]: `${PIC2_TOP_OFFSET}vw`,
                         } as CSSVars
                       }
-                    >
-                      <img
-                        src="/pictures/pic_2.jpg"
-                        alt="pic_2"
-                        className="absolute inset-0 w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
+                    />
                     <figcaption
                       className="mt-3 text-base opacity-100 md:opacity-0 md:translate-y-1 md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300 ease-out select-none text-left w-full md:text-right"
                       style={captionStyle}
@@ -250,22 +306,18 @@ export default function App() {
                 <div className="grid grid-cols-1 md:grid-cols-[minmax(5vw,1fr)_minmax(28vw,34vw)_minmax(9vw,12vw)_minmax(30vw,38vw)_minmax(5vw,1fr)] items-start gap-y-10 md:gap-y-0">
                   {/* pic_5 — Camarões (taller, 5/6) */}
                   <figure className="group md:col-start-2 md:col-end-3 flex flex-col items-center md:items-start">
-                    <div
+                    <FadeInImg
+                      src="/pictures/pic_5.jpg"
+                      alt="pic_5"
                       className="relative w-[92vw] md:w-full overflow-hidden h-[var(--h-sm)] md:h-[var(--h)] mt-0 md:-mt-[1vw]"
+                      imgClassName="absolute inset-0 w-full h-full object-cover"
                       style={
                         {
                           ["--h-sm"]: `${MOBILE_H}vw`,
                           ["--h"]: `${PIC5_H}vw`,
                         } as CSSVars
                       }
-                    >
-                      <img
-                        src="/pictures/pic_5.jpg"
-                        alt="pic_5"
-                        className="absolute inset-0 w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
+                    />
                     <figcaption
                       className="mt-3 text-base opacity-100 md:opacity-0 md:translate-y-1 md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300 ease-out select-none text-left w-full"
                       style={captionStyle}
@@ -276,8 +328,11 @@ export default function App() {
 
                   {/* pic_4 — Bolo (2/3), dropped by one-third of pic_5 */}
                   <figure className="group md:col-start-4 md:col-end-5 flex flex-col items-center md:items-end">
-                    <div
+                    <FadeInImg
+                      src="/pictures/pic_4.jpg"
+                      alt="pic_4"
                       className="relative w-[92vw] md:w-full overflow-hidden h-[var(--h-sm)] md:h-[var(--h)] mt-0 md:mt-[var(--mt)]"
+                      imgClassName="absolute inset-0 w-full h-full object-cover"
                       style={
                         {
                           ["--h-sm"]: `${MOBILE_H}vw`,
@@ -285,14 +340,7 @@ export default function App() {
                           ["--mt"]: `${PIC4_TOP_OFFSET}vw`,
                         } as CSSVars
                       }
-                    >
-                      <img
-                        src="/pictures/pic_4.jpg"
-                        alt="pic_4"
-                        className="absolute inset-0 w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
+                    />
                     <figcaption
                       className="mt-3 text-base opacity-100 md:opacity-0 md:translate-y-1 md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300 ease-out select-none text-left w-full md:text-right"
                       style={captionStyle}
@@ -306,22 +354,18 @@ export default function App() {
                 <div className="grid grid-cols-1 md:grid-cols-[minmax(5vw,1fr)_minmax(30vw,36vw)_minmax(9vw,12vw)_minmax(30vw,38vw)_minmax(5vw,1fr)] items-start gap-y-10 md:gap-y-0">
                   {/* pic_3 — Lombo (2/3), holds left rhythm */}
                   <figure className="group md:col-start-2 md:col-end-3 flex flex-col items-center md:items-start">
-                    <div
+                    <FadeInImg
+                      src="/pictures/pic_3.jpg"
+                      alt="pic_3"
                       className="relative w-[92vw] md:w-full overflow-hidden h-[var(--h-sm)] md:h-[var(--h)] mt-0 md:mt-[4vw]"
+                      imgClassName="absolute inset-0 w-full h-full object-cover"
                       style={
                         {
                           ["--h-sm"]: `${MOBILE_H}vw`,
                           ["--h"]: `${PIC3_H}vw`,
                         } as CSSVars
                       }
-                    >
-                      <img
-                        src="/pictures/pic_3.jpg"
-                        alt="pic_3"
-                        className="absolute inset-0 w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
+                    />
                     <figcaption
                       className="mt-3 text-base opacity-100 md:opacity-0 md:translate-y-1 md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300 ease-out select-none text-left w-full"
                       style={captionStyle}
@@ -332,8 +376,11 @@ export default function App() {
 
                   {/* pic_6 — Pêssegos (taller, 5/6), dropped by one-third of pic_3 */}
                   <figure className="group md:col-start-4 md:col-end-5 flex flex-col items-center md:items-end">
-                    <div
+                    <FadeInImg
+                      src="/pictures/pic_6.jpg"
+                      alt="pic_6"
                       className="relative w-[92vw] md:w-full overflow-hidden h-[var(--h-sm)] md:h-[var(--h)] mt-0 md:mt-[var(--mt)]"
+                      imgClassName="absolute inset-0 w-full h-full object-cover"
                       style={
                         {
                           ["--h-sm"]: `${MOBILE_H}vw`,
@@ -341,14 +388,7 @@ export default function App() {
                           ["--mt"]: `${PIC6_TOP_OFFSET}vw`,
                         } as CSSVars
                       }
-                    >
-                      <img
-                        src="/pictures/pic_6.jpg"
-                        alt="pic_6"
-                        className="absolute inset-0 w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
+                    />
                     <figcaption
                       className="mt-3 text-base opacity-100 md:opacity-0 md:translate-y-1 md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300 ease-out select-none text-left w-full md:text-right"
                       style={captionStyle}
@@ -412,14 +452,12 @@ export default function App() {
                     </p>
                   </div>
                   {/* Image */}
-                  <div className="relative w-full overflow-hidden h-[var(--h-sm)] md:h-[var(--h)]">
-                    <img
-                      src="/pictures/pic_7.jpg"
-                      alt="Quem Somos"
-                      className="absolute inset-0 w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                  </div>
+                  <FadeInImg
+                    src="/pictures/pic_7.jpg"
+                    alt="Quem Somos"
+                    className="relative w-full overflow-hidden h-[var(--h-sm)] md:h-[var(--h)]"
+                    imgClassName="absolute inset-0 w-full h-full object-cover"
+                  />
                 </div>
 
                 {/* Section 2: image left, text right (top-aligned) */}
@@ -428,14 +466,12 @@ export default function App() {
                   style={{ ["--h-sm"]: "65vw", ["--h"]: "28vw" } as CSSVars}
                 >
                   {/* Image */}
-                  <div className="relative w-full overflow-hidden h-[var(--h-sm)] md:h-[var(--h)] order-1 md:order-none">
-                    <img
-                      src="/pictures/pic_8.jpg"
-                      alt="Nosso Projeto"
-                      className="absolute inset-0 w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                  </div>
+                  <FadeInImg
+                    src="/pictures/pic_8.jpg"
+                    alt="Nosso Projeto"
+                    className="relative w-full overflow-hidden h-[var(--h-sm)] md:h-[var(--h)] order-1 md:order-none"
+                    imgClassName="absolute inset-0 w-full h-full object-cover"
+                  />
                   {/* Text */}
                   <div className="order-2 md:order-none self-start">
                     <h2
