@@ -1,6 +1,3 @@
-
-import React from "react";
-
 type FooterProps = {
   /** Extra white space above the footer (in pixels). Default: 110 */
   topGap?: number;
