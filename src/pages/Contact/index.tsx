@@ -1,5 +1,4 @@
-// src/pages/Menus.tsx
-export default function Menus() {
+export function Contato() {
   return (
     <main className="bg-white">
       <section className="mx-auto px-6 py-16">
@@ -7,7 +6,7 @@ export default function Menus() {
           className="text-3xl font-bold mb-6"
           style={{ fontFamily: "Work Sans, sans-serif" }}
         >
-          Menus
+          Contato
         </h1>
         <p className="text-lg leading-relaxed max-w-3xl">
           Página em branco. Adicione seu conteúdo aqui.

@@ -116,7 +116,7 @@ function FadeSwapImg({
   );
 }
 
-export default function SobreNos() {
+export function SobreNos() {
   // Separate sources per image (easy to change later)
   const IMG1 = { base: "/pictures/pic_11.jpg", hover: "/pictures/pic_12.jpg", label: "Guilherme", alt: "Sobre Nós imagem 1" };
   const IMG2 = { base: "/pictures/pic_9.jpg",  hover: "/pictures/pic_10.jpg", label: "Paulo",     alt: "Sobre Nós imagem 2" };
