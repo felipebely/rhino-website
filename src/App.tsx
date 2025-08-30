@@ -173,7 +173,7 @@ export default function App() {
   const captionStyle: React.CSSProperties = {
     fontFamily: "'DM Serif Text', serif",
     fontWeight: "bold",
-    fontStyle: "italic",
+    //fontStyle: "italic",
   };
 
   // ===== Proportional system (desktop heights in vw; mobile unified & taller) =====
@@ -446,9 +446,7 @@ export default function App() {
                       className="text-lg leading-relaxed"
                       style={{ fontFamily: "'DM Serif Text', serif" }}
                     >
-                      Este é um texto placeholder. Descreva aqui a história, a visão e a essência
-                      do projeto. Fale sobre a equipe, a inspiração e o compromisso com sabores,
-                      serviço e experiência.
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                     </p>
                   </div>
                   {/* Image */}
@@ -484,9 +482,7 @@ export default function App() {
                       className="text-lg leading-relaxed"
                       style={{ fontFamily: "'DM Serif Text', serif" }}
                     >
-                      Texto placeholder sobre o projeto: objetivos, proposta culinária, pilares
-                      criativos e o que o diferencia. Explique como as ideias ganham forma em
-                      pratos, bebidas e experiências memoráveis.
+                     Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
                     </p>
                   </div>
                 </div>
@@ -495,7 +491,6 @@ export default function App() {
           </main>
 
           {/* ===== Footer inside the curtain ===== */}
-          <div style={{ minHeight: `calc(100vh - ${navbarHeight}px - ${FOOTER_H}px)` }} />
           <Footer />
         </div>
       </div>

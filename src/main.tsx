@@ -7,21 +7,24 @@ import "./index.css"; // Tailwind
 
 import App from "./App";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 import SobreNos from "./pages/SobreNos";
 import Menus from "./pages/Menus";
 import Galeria from "./pages/Galeria";
 import Contato from "./pages/Contato";
 
+
 type PageWithNavbarProps = React.PropsWithChildren<{}>;
 
-function PageWithNavbar({ children }: PageWithNavbarProps) {
+function PageWithNavbar({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-white">
       <Navbar smallLogoOpacity={1} brandShift={1} centerBrandOpacity={0} />
       <div style={{ height: 112 }} />
-      {children}
-    </>
+      <main className="flex-1">{children}</main>
+      <Footer />
+    </div>
   );
 }
 
