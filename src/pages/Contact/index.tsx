@@ -9,7 +9,7 @@ export function Contato() {
           Contato
         </h1>
         <p className="text-lg leading-relaxed max-w-3xl">
-          Página em branco. Adicione seu conteúdo aqui!
+          Página em branco. Adicione seu conteúdo aqui.
         </p>
       </section>
     </main>

@@ -126,7 +126,7 @@ export function Home() {
           <div style={{ height: curtainLeadSpacer }} />
           <div className="pt-28" />
 
-          <main className="bg-white">
+          <div className="bg-white">
             <CurtainSection />
 
             <ParallaxSection
@@ -135,7 +135,7 @@ export function Home() {
             />
 
             <AboutSection />
-          </main>
+          </div>
 
           {/* ===== Footer inside the curtain ===== */}
           <Footer />
