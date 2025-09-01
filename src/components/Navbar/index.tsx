@@ -55,7 +55,7 @@ export const Navbar = ({
           <Link
             to="/"
             onClick={(e) => handleNavClick(e, "/")}
-            className="flex items-center gap-2 sm:gap-3 select-none ml-2 sm:ml-10 transition-transform duration-[240ms] ease-in-out"
+            className="flex items-center gap-2 sm:gap-3 select-none transition-transform duration-[240ms] ease-in-out"
             aria-label="Go to home"
             style={{
               transform: `translateX(${(-1 + brandShift) * 24}px)`,
@@ -125,7 +125,7 @@ export const Navbar = ({
 
           {/* Mobile hamburger menu */}
           <button
-            className="lg:hidden inline-flex items-center justify-center h-10 w-10 rounded-md hover:bg-white/10 transition-colors duration-200 ml-auto mr-2"
+            className="lg:hidden inline-flex items-center justify-center h-10 w-10 rounded-md hover:bg-white/10 transition-colors duration-200 ml-auto"
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMobileMenuOpen}
             onClick={toggleMobileMenu}

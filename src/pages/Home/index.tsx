@@ -124,7 +124,6 @@ export function Home() {
           }}
         >
           <div style={{ height: curtainLeadSpacer }} />
-          <div className="pt-28" />
 
           <div className="bg-white">
             <CurtainSection />
