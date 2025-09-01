@@ -1,6 +1,7 @@
 // components/Navbar.tsx
 import type React from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 type NavbarProps = {
   smallLogoOpacity?: number;
@@ -17,6 +18,7 @@ export const Navbar = ({
 }: NavbarProps) => {
   const { pathname } = useLocation();
   const isHome = pathname === "/";
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const links: AppLink[] = [
     { to: "/sobre-nos", label: "Sobre Nós" },
@@ -25,143 +27,163 @@ export const Navbar = ({
     { to: "/contato", label: "Contato" },
   ];
 
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
   // Handle clicks: if already on page, just scroll top; else let router navigate
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, to: string) => {
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    to: string
+  ) => {
     if (pathname === to) {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-black text-white">
-      <style>{`
-        .nav-link {
-          position: relative;
-          padding: 0 .5rem;
-          color: #fff;
-          text-decoration: none;
-        }
-        .nav-link::before,
-        .nav-link::after {
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          opacity: 0;
-          transition: opacity 180ms ease, transform 180ms ease;
-          color: currentColor;
-          pointer-events: none;
-          content: "";
-        }
-        .nav-link::before {
-          content: "[ ";
-          left: 0;
-          transform: translate(-0.35rem, -50%);
-        }
-        .nav-link::after {
-          content: " ]";
-          right: 0;
-          transform: translate(0.35rem, -50%);
-        }
-        .nav-link:hover::before,
-        .nav-link:hover::after,
-        .nav-link.is-active::before,
-        .nav-link.is-active::after {
-          opacity: 1;
-          transform: translate(0, -50%);
-        }
-      `}</style>
-
-      <nav className="mx-auto px-6">
-        <div className="h-28 flex items-center justify-between relative ml-10">
+      <nav className="mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="h-20 sm:h-28 flex items-center justify-between relative">
           {/* LEFT: logo + brand */}
           <Link
             to="/"
             onClick={(e) => handleNavClick(e, "/")}
-            className="flex items-center gap-3 select-none"
+            className="flex items-center gap-2 sm:gap-3 select-none transition-transform duration-[240ms] ease-in-out"
             aria-label="Go to home"
             style={{
               transform: `translateX(${(-1 + brandShift) * 24}px)`,
-              transition: "transform 240ms ease",
-              color: "#fff",
-              textDecoration: "none",
-              fontFamily: "Work Sans, sans-serif",
             }}
           >
             <img
               src="/logos/logo_black.jpg"
               alt="Rhino logo"
-              className="h-14 w-auto"
-              style={{ opacity: smallLogoOpacity, transition: "opacity 240ms ease" }}
+              className="h-10 w-auto sm:h-14 transition-opacity duration-[240ms] ease-in-out"
+              style={{ opacity: smallLogoOpacity }}
             />
             <div
-              className="text-2xl sm:text-3xl font-bold tracking-wider"
-              style={{
-                opacity: brandShift,
-                transition: "opacity 240ms ease",
-                whiteSpace: "nowrap",
-                color: "#fff",
-              }}
+              className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-wider font-work-sans transition-opacity duration-[240ms] ease-in-out whitespace-nowrap"
+              style={{ opacity: brandShift }}
             >
               {isHome ? "[RHINO]" : "RHINO"}
             </div>
           </Link>
 
-          {/* CENTER: only on home */}
+          {/* CENTER: only on home and larger screens */}
           {isHome && (
             <div
-              className="absolute left-1/2 -translate-x-1/2 text-6xl font-bold tracking-wider pointer-events-none select-none"
-              style={{
-                fontFamily: "Work Sans, sans-serif",
-                color: "#fff",
-                opacity: centerBrandOpacity,
-                transition: "opacity 240ms ease",
-                whiteSpace: "nowrap",
-              }}
+              className="block absolute left-1/2 -translate-x-1/2 text-4xl xl:text-6xl font-bold tracking-wider pointer-events-none select-none font-work-sans transition-opacity duration-[240ms] ease-in-out whitespace-nowrap"
+              style={{ opacity: centerBrandOpacity }}
             >
               RHINO
             </div>
           )}
 
-          {/* RIGHT: nav links */}
-          <ul
-            className="hidden sm:flex items-center gap-10 mr-10"
-            style={{ fontFamily: "Work Sans, sans-serif", fontWeight: 700 }}
-          >
+          {/* RIGHT: desktop nav links */}
+          <ul className="hidden lg:flex items-center gap-10 xl:gap-12 mr-10 font-work-sans font-bold">
             {links.map(({ to, label }) => (
-              <li key={to} className="text-lg">
+              <li key={to} className="text-base xl:text-lg group">
+                <NavLink
+                  to={to}
+                  end
+                  onClick={(e) => handleNavClick(e, to)}
+                  className="relative text-white no-underline transition-all duration-[180ms] ease-in-out"
+                >
+                  {({ isActive }: { isActive: boolean }) => (
+                    <>
+                      <span
+                        className={`absolute -left-1 top-1/2 -translate-y-1/2 transition-all duration-[180ms] ease-in-out pointer-events-none text-white ${
+                          isActive
+                            ? "opacity-100 -translate-x-1"
+                            : "opacity-0 group-hover:opacity-100 group-hover:-translate-x-1"
+                        }`}
+                      >
+                        [
+                      </span>
+                      {label}
+                      <span
+                        className={`absolute -right-1 top-1/2 -translate-y-1/2 transition-all duration-[180ms] ease-in-out pointer-events-none text-white ${
+                          isActive
+                            ? "opacity-100 translate-x-1"
+                            : "opacity-0 group-hover:opacity-100 group-hover:translate-x-1"
+                        }`}
+                      >
+                        ]
+                      </span>
+                    </>
+                  )}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+
+          {/* Mobile hamburger menu */}
+          <button
+            className="lg:hidden inline-flex items-center justify-center h-10 w-10 rounded-md hover:bg-white/10 transition-colors duration-200 ml-auto"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
+            onClick={toggleMobileMenu}
+            type="button"
+          >
+            <div className="relative w-6 h-6">
+              {/* Top line */}
+              <span
+                className={`absolute top-0 left-0 w-6 h-0.5 bg-white transition-all duration-300 ease-in-out origin-center ${
+                  isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
+                }`}
+              />
+              {/* Middle line */}
+              <span
+                className={`absolute top-1/2 left-0 w-6 h-0.5 bg-white transition-all duration-300 ease-in-out -translate-y-1/2 ${
+                  isMobileMenuOpen ? "opacity-0 scale-x-0" : ""
+                }`}
+              />
+              {/* Bottom line */}
+              <span
+                className={`absolute bottom-0 left-0 w-6 h-0.5 bg-white transition-all duration-300 ease-in-out origin-center ${
+                  isMobileMenuOpen ? "-rotate-45 -translate-y-3.5" : ""
+                }`}
+              />
+            </div>
+          </button>
+        </div>
+
+        {/* Mobile menu overlay */}
+        <div
+          className={`lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-sm border-t border-white/20 transition-all duration-300 ${
+            isMobileMenuOpen
+              ? "opacity-100 visible translate-y-0"
+              : "opacity-0 invisible -translate-y-4"
+          }`}
+        >
+          <ul className="px-6 py-8 space-y-6 font-work-sans font-bold">
+            {links.map(({ to, label }) => (
+              <li key={to}>
                 <NavLink
                   to={to}
                   end
                   onClick={(e) => handleNavClick(e, to)}
                   className={({ isActive }: { isActive: boolean }) =>
-                    `nav-link ${isActive ? "is-active" : ""}`
+                    `block text-2xl transition-colors duration-200 ${
+                      isActive
+                        ? "text-white border-l-4 border-white pl-4"
+                        : "text-white/80 hover:text-white"
+                    }`
                   }
-                  style={{
-                    color: "#fff",
-                    textDecoration: "none",
-                    fontFamily: "Work Sans, sans-serif",
-                    fontWeight: 700,
-                  }}
                 >
                   {label}
                 </NavLink>
               </li>
             ))}
           </ul>
-
-          {/* Mobile hamburger (visual only) */}
-          <button
-            className="sm:hidden inline-flex items-center justify-center h-9 w-9 rounded-md hover:bg-white/10 ml-auto"
-            aria-label="Open menu"
-            type="button"
-          >
-            <span className="block w-5 h-0.5 bg-white mb-1.5" />
-            <span className="block w-5 h-0.5 bg-white mb-1.5" />
-            <span className="block w-5 h-0.5 bg-white" />
-          </button>
         </div>
       </nav>
     </header>
   );
-}
+};
