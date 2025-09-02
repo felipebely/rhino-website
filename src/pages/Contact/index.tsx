@@ -1,9 +1,6 @@
 export function Contato() {
-
-  async function handleSubmit() {}
-
   return (
-    <main className="bg-white min-h-screen">
+    <main className="bg-white min-h-auto">
       <section className="mx-auto px-6 py-16 max-w-4xl">
         <div className="text-center mb-12">
           <h1
@@ -72,7 +69,7 @@ export function Contato() {
         </div>
 
         {/* Contact Form */}
-        <div className="bg-gray-50 rounded-2xl p-8 shadow-lg">
+        {/* <div className="bg-gray-50 rounded-2xl p-8 shadow-lg">
           <h2 className="text-2xl font-bold mb-6 text-center text-black">
             Envie uma Mensagem
           </h2>
@@ -148,10 +145,10 @@ export function Contato() {
               </button>
             </div>
           </form>
-        </div>
+        </div> */}
 
         {/* Additional Info */}
-        <div className="mt-12 text-center">
+        {/* <div className="mt-12 text-center">
           <p className="text-gray-600 mb-4">Ou entre em contato por email:</p>
           <a
             href="mailto:contato@rhino.com"
@@ -159,7 +156,7 @@ export function Contato() {
           >
             contato@rhino.com
           </a>
-        </div>
+        </div> */}
       </section>
     </main>
   );
