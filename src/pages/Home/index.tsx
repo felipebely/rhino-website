@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Navbar,
   Footer,
@@ -11,20 +11,19 @@ import {
 export function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [viewportHeight, setViewportHeight] = useState(0);
-  const [contentHeight, setContentHeight] = useState(0);
 
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const curtainInnerRef = useRef<HTMLDivElement | null>(null);
-
+  // Initialize viewport and scroll values
   useEffect(() => {
-    const el = curtainInnerRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver(() => {
-      setContentHeight(el.scrollHeight || el.offsetHeight || 0);
-    });
-    ro.observe(el);
-    setContentHeight(el.scrollHeight || el.offsetHeight || 0);
-    return () => ro.disconnect();
+    const onResize = () => setViewportHeight(window.innerHeight || 0);
+    const onScroll = () => setScrollY(window.scrollY || 0);
+    onResize();
+    onScroll();
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   const navbarHeight = 112;
@@ -47,9 +46,9 @@ export function Home() {
   const blackBottom = overlayHeight - (containerHasRoom ? effectiveScroll : 0);
   const blackCoverage = clamp(blackBottom / Math.max(1, viewportHeight), 0, 1);
 
-  // Hero fade
-  const fadeStart = 0.0;
-  const fadeEnd = 0.4;
+  // Hero fade (tuned to sync with curtain collapse)
+  const fadeStart = 0.05;
+  const fadeEnd = 0.32;
   const tFade = clamp(
     (progressBlack - fadeStart) / Math.max(0.0001, fadeEnd - fadeStart),
     0,
@@ -60,8 +59,8 @@ export function Home() {
   const imageOpacity = clamp(Math.min(rawOpacity, blackCoverage - 0.01), 0, 1);
 
   // Brand crossfade
-  const centerFadeOutStart = 0.24;
-  const centerFadeOutEnd = 0.34;
+  const centerFadeOutStart = 0.2;
+  const centerFadeOutEnd = 0.32;
   const tCenter = clamp(
     (progressBlack - centerFadeOutStart) /
       Math.max(0.0001, centerFadeOutEnd - centerFadeOutStart),
@@ -70,8 +69,8 @@ export function Home() {
   );
   const centerBrandOpacity = 1 - tCenter * tCenter * (3 - 2 * tCenter);
 
-  const inlineFadeInStart = 0.38;
-  const inlineFadeInEnd = 0.52;
+  const inlineFadeInStart = 0.34;
+  const inlineFadeInEnd = 0.5;
   const tInline = clamp(
     (progressBlack - inlineFadeInStart) /
       Math.max(0.0001, inlineFadeInEnd - inlineFadeInStart),
@@ -82,67 +81,33 @@ export function Home() {
   const smallLogoOpacity = inlineOpacity;
   const brandShift = inlineOpacity;
 
-  const curtainLeadSpacer = Math.max(0, viewportHeight - navbarHeight);
-
   return (
     <>
-      {/* Collapsing black header */}
-      <div
-        className="fixed top-0 left-0 w-full bg-black z-10 overflow-hidden"
-        style={{
-          height: `${overlayHeight}px`,
-          transform: containerHasRoom
-            ? `translateY(-${effectiveScroll}px)`
-            : "none",
-        }}
+      <Navbar
+        smallLogoOpacity={smallLogoOpacity}
+        brandShift={brandShift}
+        centerBrandOpacity={centerBrandOpacity}
       />
 
-      {/* Navbar */}
-      <div className="relative z-40">
-        <Navbar
-          smallLogoOpacity={smallLogoOpacity}
-          brandShift={brandShift}
-          centerBrandOpacity={centerBrandOpacity}
-        />
-      </div>
+      <HeroSection imageOpacity={imageOpacity} />
+      <div className="h-screen bg-white z-20"></div>
 
-      <HeroSection containerRef={containerRef} imageOpacity={imageOpacity} />
-
-      {/* Curtain content */}
-      <div
-        className="fixed inset-0 z-30 pointer-events-auto bg-white will-change-[clip-path]"
+      {/* <div
+        className="sticky top-0 inset-0 h-svh z-20 pointer-events-none bg-white will-change-[clip-path]"
         style={{
           clipPath: `inset(${Math.max(0, blackBottom)}px 0 0 0)`,
           WebkitClipPath: `inset(${Math.max(0, blackBottom)}px 0 0 0)`,
         }}
       >
-        <div
-          ref={curtainInnerRef}
-          style={{
-            transform: `translateY(-${scrollY}px)`,
-            willChange: "transform",
-          }}
-        >
-          <div style={{ height: curtainLeadSpacer }} />
+        <CurtainSection />
+        <ParallaxSection
+          setScrollY={setScrollY}
+          setViewportHeight={setViewportHeight}
+        />
 
-          <div className="bg-white">
-            <CurtainSection />
-
-            <ParallaxSection
-              setScrollY={setScrollY}
-              setViewportHeight={setViewportHeight}
-            />
-
-            <AboutSection />
-          </div>
-
-          {/* ===== Footer inside the curtain ===== */}
-          <Footer />
-        </div>
-      </div>
-
-      {/* Scroll proxy mirrors measured content so the page can scroll */}
-      <div style={{ height: Math.max(contentHeight, viewportHeight + 1) }} />
+        <AboutSection />
+      </div> */}
+      <Footer />
     </>
   );
 }

@@ -13,3 +13,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@theme {
+  --spacing-navbar-desktop: 112px;
+  --spacing-navbar-mobile: 64px;
+}

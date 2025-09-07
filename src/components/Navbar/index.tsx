@@ -1,5 +1,3 @@
-// components/Navbar.tsx
-import type React from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -27,12 +25,10 @@ export const Navbar = ({
     { to: "/contato", label: "Contato" },
   ];
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // Handle clicks: if already on page, just scroll top; else let router navigate
   const handleNavClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     to: string
@@ -86,7 +82,7 @@ export const Navbar = ({
           )}
 
           {/* RIGHT: desktop nav links */}
-          <ul className="hidden lg:flex items-center gap-10 xl:gap-12 mr-10 font-work-sans font-bold">
+          <ul className="hidden lg:flex items-center gap-10 xl:gap-12 font-work-sans font-bold">
             {links.map(({ to, label }) => (
               <li key={to} className="text-base xl:text-lg group">
                 <NavLink
