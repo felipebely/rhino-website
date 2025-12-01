@@ -21,6 +21,7 @@ export const Navbar = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const links: AppLink[] = [
+    { to: "/newsletter", label: "Newsletter" },
     { to: "/sobre-nos", label: "Sobre Nós" },
     { to: "/menus", label: "Menus" },
     { to: "/galeria", label: "Galeria" },

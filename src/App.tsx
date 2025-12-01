@@ -5,6 +5,7 @@ import { SobreNos } from "./pages/AboutUs";
 import { Menus } from "./pages/Menus";
 import { Galeria } from "./pages/Galery";
 import { Contato } from "./pages/Contact";
+import { Newsletter } from "./pages/Newsletter";
 
 
 const router  = createBrowserRouter([
@@ -15,6 +16,10 @@ const router  = createBrowserRouter([
   {
     element: <Layout />,
     children: [
+      {
+        path: "/newsletter",
+        element: <Newsletter />,
+      },
       {
         path: "/sobre-nos",
         element: <SobreNos />,
