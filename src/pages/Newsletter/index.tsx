@@ -1,33 +1,102 @@
+import { useEffect, useState, Fragment } from "react";
+import { sanity } from "../../lib/sanity";
+import { PortableText } from "@portabletext/react";
+import { urlFor } from "../../lib/imageBuilder";
+import { Link } from "react-router-dom";
+
+type NewsletterPost = {
+  title: string;
+  author: string;
+  date: string;
+  content: any[];
+};
+
+type NewsletterPostWithMeta = NewsletterPost & {
+  _id: string;
+  slug: { current: string };
+};
+
+const latestPostQuery = `
+  *[_type == "newsletterPost"] | order(date desc)[0] {
+    title,
+    author,
+    date,
+    content
+  }
+`;
+
 export function Newsletter() {
+  const [post, setPost] = useState<NewsletterPost | null>(null);
+  const [allPosts, setAllPosts] = useState<NewsletterPostWithMeta[]>([]);
+
+  useEffect(() => {
+    sanity.fetch<NewsletterPost>(latestPostQuery).then(setPost);
+  }, []);
+
+  useEffect(() => {
+    sanity
+      .fetch<NewsletterPostWithMeta[]>(
+        `*[_type == "newsletterPost"] | order(date desc) {
+          _id,
+          title,
+          author,
+          date,
+          slug
+        }`
+      )
+      .then(setAllPosts);
+  }, []);
+
   return (
     <main className="bg-white min-h-screen px-6 py-16 max-w-4xl mx-auto font-work-sans">
       {/* Post Header */}
       <section className="mb-16 text-left">
-        <h1 className="text-4xl font-bold mb-2">Sample Newsletter Title</h1>
-        <p className="text-gray-700 text-lg">By RhinoCozinha Editorial</p>
-        <p className="text-gray-500 text-md">January 15, 2025</p>
+
+        {post ? (
+          <>
+            <h1 className="text-4xl font-bold mb-2">{post.title}</h1>
+
+            <p className="text-gray-700 text-lg">
+              {post.author}
+            </p>
+
+            <p className="text-gray-500 text-md">
+              {new Date(post.date).toLocaleDateString("pt-BR", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })}
+            </p>
+          </>
+        ) : (
+          <>
+            {/* Fallback while loading */}
+            <h1 className="text-4xl font-bold mb-2">Loading…</h1>
+            <p className="text-gray-700 text-lg">Please wait</p>
+          </>
+        )}
       </section>
 
       {/* Post Body */}
       <section className="prose prose-lg text-gray-800 leading-relaxed mb-24">
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sed nunc eget
-          mi facilisis tincidunt. Integer bibendum purus sed est suscipit, vitae
-          luctus lorem vehicula. Nulla facilisi. Maecenas gravida interdum nibh nec
-          consequat. Vivamus placerat, elit ut vulputate aliquet, lacus orci dapibus
-          tortor, id pharetra odio lorem sed sapien.
-        </p>
-        <p>
-          Suspendisse potenti. Donec aliquet ipsum sit amet purus gravida, a rutrum
-          lectus volutpat. Vestibulum ante ipsum primis in faucibus orci luctus et
-          ultrices posuere cubilia curae; Sed in urna nec sapien commodo ultricies.
-          Sed eget pellentesque velit. Duis non lorem a est dapibus feugiat.
-        </p>
-        <p>
-          Aliquam erat volutpat. Aenean non scelerisque odio, vitae viverra urna. Sed
-          pharetra efficitur dui, sit amet faucibus tortor fermentum eget. Etiam
-          mollis mi vel sem ultricies, vel convallis libero dictum.
-        </p>
+        {post ? (
+          <PortableText
+            value={post.content}
+            components={{
+              types: {
+                image: ({ value }) => (
+                  <img
+                    src={urlFor(value).width(900).quality(90).url()}
+                    alt={value.alt || "Newsletter image"}
+                    className="rounded-lg my-8 w-full"
+                  />
+                ),
+              },
+            }}
+          />
+        ) : (
+          <p>Loading content…</p>
+        )}
       </section>
 
       {/* All Newsletters */}
@@ -37,64 +106,53 @@ export function Newsletter() {
           Read past issues of the Rhino Newsletter.
         </p>
 
-        {/* 2025 */}
-        <div className="mt-10">
-          <div className="grid grid-cols-[70px_70px_minmax(0,1fr)] gap-x-10 gap-y-3 text-sm">
-            {/* Row 1 */}
-            <span className="text-xl font-bold text-black self-start">2025</span>
-            <span className="text-sm font-semibold text-gray-400 self-center">15/01</span>
-            <span className="text-lg font-semibold text-black cursor-pointer px-1 py-1 hover:bg-yellow-100 hover:underline underline-offset-2 decoration-yellow-600">
-              On having high standards, the secret to willpower, and how to be strong yet flexible
-            </span>
-
-            {/* Row 2 */}
-            <span className="self-center" />
-            <span className="text-sm font-semibold text-gray-400 self-center">08/01</span>
-            <span className="text-lg font-semibold text-black cursor-pointer px-1 py-1 hover:bg-yellow-100 hover:underline underline-offset-2 decoration-yellow-600">
-              On the best type of risk, three keys to improvement, and the purest form of generosity
-            </span>
-
-            {/* Row 3 */}
-            <span className="self-center" />
-            <span className="text-sm font-semibold text-gray-400 self-center">18/12</span>
-            <span className="text-lg font-semibold text-black cursor-pointer px-1 py-1 hover:bg-yellow-100 hover:underline underline-offset-2 decoration-yellow-600">
-              How to gain a competitive edge, cultivating small productive habits, and a call to self-acceptance
-            </span>
-
-            {/* Row 4 */}
-            <span className="self-center" />
-            <span className="text-sm font-semibold text-gray-400 self-center">11/12</span>
-            <span className="text-lg font-semibold text-black cursor-pointer px-1 py-1 hover:bg-yellow-100 hover:underline underline-offset-2 decoration-yellow-600">
-              How results accumulate, the secret to motivation, and living with calm persistence
-            </span>
-          </div>
-        </div>
-
-        {/* 2024 */}
-        <div className="mt-12">
-          <div className="grid grid-cols-[70px_70px_minmax(0,1fr)] gap-x-10 gap-y-3 text-sm">
-            {/* Row 1 */}
-            <span className="text-xl font-bold text-black self-start">2024</span>
-            <span className="text-sm font-semibold text-gray-400 self-center">20/11</span>
-            <span className="text-lg font-semibold text-black cursor-pointer px-1 py-1 hover:bg-yellow-100 hover:underline underline-offset-2 decoration-yellow-600">
-              A holiday feast to remember
-            </span>
-
-            {/* Row 2 */}
-            <span className="self-center" />
-            <span className="text-sm font-semibold text-gray-400 self-center">06/11</span>
-            <span className="text-lg font-semibold text-black cursor-pointer px-1 py-1 hover:bg-yellow-100 hover:underline underline-offset-2 decoration-yellow-600">
-              Fermentation and flavor science
-            </span>
-
-            {/* Row 3 */}
-            <span className="self-center" />
-            <span className="text-sm font-semibold text-gray-400 self-center">23/10</span>
-            <span className="text-lg font-semibold text-black cursor-pointer px-1 py-1 hover:bg-yellow-100 hover:underline underline-offset-2 decoration-yellow-600">
-              Building flavor from scratch
-            </span>
-          </div>
-        </div>
+        {allPosts.length > 0 && (() => {
+          const groupedByYear = allPosts.reduce<Record<string, NewsletterPostWithMeta[]>>(
+            (groups, post) => {
+              const year = new Date(post.date).getFullYear().toString();
+              if (!groups[year]) groups[year] = [];
+              groups[year].push(post);
+              return groups;
+            },
+            {}
+          );
+  
+          return Object.entries(groupedByYear)
+            .sort(([yearA], [yearB]) => Number(yearB) - Number(yearA)) // newest year first
+            .map(([year, posts]) => (
+              <div key={year} className="mt-12">
+                <div className="grid grid-cols-[70px_70px_minmax(0,1fr)] gap-x-10 gap-y-3 text-sm">
+                  
+                  <span className="text-xl font-bold text-black self-start">{year}</span>
+  
+                  {posts
+                    .sort(
+                      (a, b) =>
+                        new Date(b.date).getTime() - new Date(a.date).getTime()
+                    )
+                    .map((p, index) => (
+                      <Fragment key={p._id}>
+                        {index !== 0 && <span className="self-center" />}
+  
+                        <span className="text-sm font-semibold text-gray-400 self-center">
+                          {new Date(p.date).toLocaleDateString("pt-BR", {
+                            day: "2-digit",
+                            month: "2-digit",
+                          })}
+                        </span>
+  
+                        <Link
+                          to={`/newsletter/${p.slug.current}`}
+                          className="text-lg font-semibold text-black cursor-pointer px-1 py-1 hover:bg-yellow-100 hover:underline underline-offset-2 decoration-yellow-600 inline"
+                        >
+                          {p.title}
+                        </Link>
+                      </Fragment>
+                    ))}
+                </div>
+              </div>
+            ));
+        })()}
       </section>
     </main>
   );
