@@ -17,10 +17,6 @@ const router  = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: "/newsletter",
-        element: <Newsletter />,
-      },
-      {
         path: "/sobre-nos",
         element: <SobreNos />,
       },
@@ -35,7 +31,16 @@ const router  = createBrowserRouter([
       {
         path: "/contato",
         element: <Contato />,
-      }
+      },
+      {
+        path: "/newsletter",
+        element: <Newsletter />,
+      },
+      {
+        path: "/newsletter/:slug",
+        element: <Newsletter />,
+      },
+
     ],
   }
 ]);
