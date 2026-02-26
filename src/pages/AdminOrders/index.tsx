@@ -1,5 +1,5 @@
 // src/pages/AdminOrders/index.tsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { getBatchStatus, formatDateBR, formatToSQLDate } from "../../utils/dateLogic";
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // 1. Interfaces
 interface GalleryItemData {
@@ -137,7 +137,7 @@ export function Galeria() {
             className={`w-full max-w-4xl max-h-[90vh] aspect-[3/4] md:aspect-auto ${selectedItem.color} shadow-2xl rounded-sm`}
             onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the image itself
           >
-             {/* In the real version, use: 
+            {/* In the real version, use: 
                 <img src={selectedItem.src} className="w-full h-full object-contain" />
              */}
           </div>
