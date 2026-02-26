@@ -24,6 +24,7 @@ export const Navbar = ({
     { to: "/newsletter", label: "Newsletter" },
     { to: "/sobre-nos", label: "Sobre Nós" },
     { to: "/menus", label: "Menus" },
+    { to: "/produtos", label: "Produtos" },
     { to: "/galeria", label: "Galeria" },
     { to: "/contato", label: "Contato" },
   ];
@@ -99,21 +100,19 @@ export const Navbar = ({
                   {({ isActive }: { isActive: boolean }) => (
                     <>
                       <span
-                        className={`absolute -left-1 top-1/2 -translate-y-1/2 transition-all duration-[180ms] ease-in-out pointer-events-none text-white ${
-                          isActive
+                        className={`absolute -left-1 top-1/2 -translate-y-1/2 transition-all duration-[180ms] ease-in-out pointer-events-none text-white ${isActive
                             ? "opacity-100 -translate-x-1"
                             : "opacity-0 group-hover:opacity-100 group-hover:-translate-x-1"
-                        }`}
+                          }`}
                       >
                         [
                       </span>
                       {label}
                       <span
-                        className={`absolute -right-1 top-1/2 -translate-y-1/2 transition-all duration-[180ms] ease-in-out pointer-events-none text-white ${
-                          isActive
+                        className={`absolute -right-1 top-1/2 -translate-y-1/2 transition-all duration-[180ms] ease-in-out pointer-events-none text-white ${isActive
                             ? "opacity-100 translate-x-1"
                             : "opacity-0 group-hover:opacity-100 group-hover:translate-x-1"
-                        }`}
+                          }`}
                       >
                         ]
                       </span>
@@ -135,21 +134,18 @@ export const Navbar = ({
             <div className="relative w-6 h-6">
               {/* Top line */}
               <span
-                className={`absolute top-0 left-0 w-6 h-0.5 bg-white transition-all duration-300 ease-in-out origin-center ${
-                  isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
-                }`}
+                className={`absolute top-0 left-0 w-6 h-0.5 bg-white transition-all duration-300 ease-in-out origin-center ${isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
+                  }`}
               />
               {/* Middle line */}
               <span
-                className={`absolute top-1/2 left-0 w-6 h-0.5 bg-white transition-all duration-300 ease-in-out -translate-y-1/2 ${
-                  isMobileMenuOpen ? "opacity-0 scale-x-0" : ""
-                }`}
+                className={`absolute top-1/2 left-0 w-6 h-0.5 bg-white transition-all duration-300 ease-in-out -translate-y-1/2 ${isMobileMenuOpen ? "opacity-0 scale-x-0" : ""
+                  }`}
               />
               {/* Bottom line */}
               <span
-                className={`absolute bottom-0 left-0 w-6 h-0.5 bg-white transition-all duration-300 ease-in-out origin-center ${
-                  isMobileMenuOpen ? "-rotate-45 -translate-y-3.5" : ""
-                }`}
+                className={`absolute bottom-0 left-0 w-6 h-0.5 bg-white transition-all duration-300 ease-in-out origin-center ${isMobileMenuOpen ? "-rotate-45 -translate-y-3.5" : ""
+                  }`}
               />
             </div>
           </button>
@@ -157,11 +153,10 @@ export const Navbar = ({
 
         {/* Mobile menu overlay */}
         <div
-          className={`lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-sm border-t border-white/20 transition-all duration-300 ${
-            isMobileMenuOpen
+          className={`lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-sm border-t border-white/20 transition-all duration-300 ${isMobileMenuOpen
               ? "opacity-100 visible translate-y-0"
               : "opacity-0 invisible -translate-y-4"
-          }`}
+            }`}
         >
           <ul className="px-6 py-8 space-y-6 font-work-sans font-bold">
             {links.map(({ to, label }) => (
@@ -171,10 +166,9 @@ export const Navbar = ({
                   end
                   onClick={(e) => handleNavClick(e, to)}
                   className={({ isActive }: { isActive: boolean }) =>
-                    `block text-2xl transition-colors duration-200 ${
-                      isActive
-                        ? "text-white border-l-4 border-white pl-4"
-                        : "text-white/80 hover:text-white"
+                    `block text-2xl transition-colors duration-200 ${isActive
+                      ? "text-white border-l-4 border-white pl-4"
+                      : "text-white/80 hover:text-white"
                     }`
                   }
                 >

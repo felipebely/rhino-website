@@ -6,9 +6,11 @@ import { Menus } from "./pages/Menus";
 import { Galeria } from "./pages/Galery";
 import { Contato } from "./pages/Contact";
 import { Newsletter } from "./pages/Newsletter";
+import { Products } from "./pages/Products";
+import { AdminOrders } from "./pages/AdminOrders";
+import { OrderStatus } from "./pages/OrderStatus";
 
-
-const router  = createBrowserRouter([
+const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
@@ -40,7 +42,18 @@ const router  = createBrowserRouter([
         path: "/newsletter/:slug",
         element: <Newsletter />,
       },
-
+      {
+        path: "/produtos",
+        element: <Products />,
+      },
+      {
+        path: "/admin-orders",
+        element: <AdminOrders />,
+      },
+      {
+        path: "/pedido/:id",
+        element: <OrderStatus />,
+      },
     ],
   }
 ]);
