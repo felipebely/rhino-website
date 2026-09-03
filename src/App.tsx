@@ -9,6 +9,7 @@ import { Newsletter } from "./pages/Newsletter";
 import { Products } from "./pages/Products";
 import { AdminOrders } from "./pages/AdminOrders";
 import { OrderStatus } from "./pages/OrderStatus";
+import { AdminRoute } from "./components/AdminRoute";
 
 const router = createBrowserRouter([
   {
@@ -48,7 +49,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/admin-orders",
-        element: <AdminOrders />,
+        element: <AdminRoute><AdminOrders /></AdminRoute>,
       },
       {
         path: "/pedido/:id",
