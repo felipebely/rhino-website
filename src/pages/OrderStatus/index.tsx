@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
-import { getBatchStatus, formatDateBR } from "../../utils/dateLogic";
+import { formatDateBR } from "../../utils/dateLogic";
 
 type OrderItem = {
     id: string;
@@ -31,28 +31,25 @@ export function OrderStatus() {
     const [canceling, setCanceling] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const { cutoffLimit } = getBatchStatus();
-    const canCancel = new Date() <= cutoffLimit;
+    const accessToken = new URLSearchParams(window.location.hash.slice(1)).get("token");
 
     useEffect(() => {
         async function fetchOrder() {
-            if (!id) return;
+            if (!id || !accessToken) {
+                setError("O link de acesso ao pedido está incompleto.");
+                setLoading(false);
+                return;
+            }
             try {
-                const { data, error } = await supabase
-                    .from("orders")
-                    .select(`
-                        id, customer_name, status, payment_method, total_amount, delivery_date,
-                        order_items (
-                            id, quantity, price_at_purchase, product_id,
-                            products (name)
-                        )
-                    `)
-                    .eq("id", id)
-                    .single();
+                const { data, error } = await supabase.rpc("get_order_status", {
+                    p_order_id: id,
+                    p_access_token: accessToken,
+                });
 
                 if (error) throw error;
+                if (!data) throw new Error("Order not found");
                 setOrder(data as unknown as Order);
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error("Error fetching order:", err);
                 setError("Pedido não encontrado ou ocorreu um erro.");
             } finally {
@@ -61,25 +58,28 @@ export function OrderStatus() {
         }
 
         fetchOrder();
-    }, [id]);
+    }, [accessToken, id]);
 
     const handleCancel = async () => {
         if (!window.confirm("Tem certeza que deseja cancelar este pedido?")) return;
 
         setCanceling(true);
         try {
-            const { error } = await supabase
-                .from("orders")
-                .update({ status: 'Cancelada' })
-                .eq("id", id);
+            if (!id || !accessToken) throw new Error("Missing order access token");
+
+            const { data, error } = await supabase.rpc("cancel_order", {
+                p_order_id: id,
+                p_access_token: accessToken,
+            });
 
             if (error) throw error;
+            if (data !== true) throw new Error("Order could not be cancelled");
 
             // Optimistic UI update
             if (order) {
                 setOrder({ ...order, status: 'Cancelada' });
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error canceling order:", err);
             alert("Não foi possível cancelar o pedido. Tente novamente ou contate-nos pelo WhatsApp.");
         } finally {
@@ -109,6 +109,10 @@ export function OrderStatus() {
     // Parse the date to ensure correct timezone handling for display
     const deliveryDateObj = new Date(order.delivery_date + 'T00:00:00');
     const formattedDeliveryDate = formatDateBR(deliveryDateObj);
+    const cancellationCutoff = new Date(deliveryDateObj);
+    cancellationCutoff.setDate(deliveryDateObj.getDate() - 2);
+    cancellationCutoff.setHours(23, 59, 59, 999);
+    const canCancel = new Date() <= cancellationCutoff;
 
     return (
         <main className="bg-white min-h-screen py-16 px-4 md:px-8 font-work-sans">
