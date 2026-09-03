@@ -17,11 +17,9 @@ ALTER TABLE orders ALTER COLUMN status SET DEFAULT 'Pendente';
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_email text;
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS contact_channel text DEFAULT 'WhatsApp' CHECK (contact_channel IN ('WhatsApp', 'E-mail'));
 
--- 3. Add UPDATE policy so users can cancel their orders!
--- (Without this, the frontend cancel button fails silently due to RLS)
+-- 3. Remove the old public UPDATE policy. Customer cancellation is handled by
+-- the token-scoped cancel_order function in security_hardening.sql.
 DROP POLICY IF EXISTS "Allow public update to orders" ON orders;
-CREATE POLICY "Allow public update to orders" ON orders
-  FOR UPDATE USING (true);
 
 -- 4. Create Order Logs Table for Audit Tracking
 CREATE TABLE IF NOT EXISTS order_logs (
@@ -36,14 +34,9 @@ CREATE TABLE IF NOT EXISTS order_logs (
 -- Enable RLS for order_logs
 ALTER TABLE order_logs ENABLE ROW LEVEL SECURITY;
 
--- Allow public read of order_logs
+-- Never expose audit logs directly to anonymous visitors.
 DROP POLICY IF EXISTS "Allow public read to order_logs" ON order_logs;
-CREATE POLICY "Allow public read to order_logs" ON order_logs
-    FOR SELECT USING (true);
--- Allow public insert to order_logs
 DROP POLICY IF EXISTS "Allow public insert to order_logs" ON order_logs;
-CREATE POLICY "Allow public insert to order_logs" ON order_logs
-    FOR INSERT WITH CHECK (true);
 
 -- 5. Create Database Trigger for Automatic Logging
 CREATE OR REPLACE FUNCTION log_order_status_change()

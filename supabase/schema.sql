@@ -41,7 +41,8 @@ INSERT INTO products (name, description, price, type, is_active) VALUES
 ('Pizza Margherita (Congelada)', 'Molho de tomate pelati, mozzarella, manjericão', 48.00, 'frozen', true),
 ('Pizza Calabresa (Congelada)', 'Calabresa artesanal, cebola roxa, oregano', 50.00, 'frozen', true);
 
--- Enable RLS (Row Level Security) - Basic setup for anon access just for insertion/reading
+-- Enable RLS. Customer access to orders is provided only through the
+-- token-scoped functions in security_hardening.sql.
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
@@ -50,18 +51,5 @@ ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access to active products" ON products
   FOR SELECT USING (is_active = true);
 
--- Allow anonymous insert to orders
-CREATE POLICY "Allow public insert to orders" ON orders
-  FOR INSERT WITH CHECK (true);
-
--- Allow anonymous read to orders (ideally you'd restrict this normally, but fine for simple MVP)
-CREATE POLICY "Allow public read to orders" ON orders
-  FOR SELECT USING (true);
-
--- Allow anonymous insert to order_items
-CREATE POLICY "Allow public insert to order_items" ON order_items
-  FOR INSERT WITH CHECK (true);
-
--- Allow anonymous read to order_items
-CREATE POLICY "Allow public read to order_items" ON order_items
-  FOR SELECT USING (true);
+-- Do not add direct anonymous policies for orders or order_items. Apply
+-- security_hardening.sql after this schema to install the safe order API.

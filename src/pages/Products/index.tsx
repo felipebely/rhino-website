@@ -14,6 +14,11 @@ type Product = {
 
 type CartItem = Product & { quantity: number };
 
+type OrderAccess = {
+    orderId: string;
+    accessToken: string;
+};
+
 export function Products() {
     const [products, setProducts] = useState<Product[]>([]);
     const [cart, setCart] = useState<CartItem[]>([]);
@@ -27,7 +32,7 @@ export function Products() {
     const [contactChannel, setContactChannel] = useState<"WhatsApp" | "E-mail">("WhatsApp");
     const [paymentMethod, setPaymentMethod] = useState<"PIX" | "Pagamento na Entrega">("PIX");
     const [submitting, setSubmitting] = useState(false);
-    const [orderSuccess, setOrderSuccess] = useState<string | null>(null); // Store Order ID
+    const [orderSuccess, setOrderSuccess] = useState<OrderAccess | null>(null);
 
     const { isCurrentBatchOpen, nextDeliveryDate } = getBatchStatus();
     const formattedDeliveryDate = formatDateBR(nextDeliveryDate);
@@ -78,42 +83,32 @@ export function Products() {
         setSubmitting(true);
 
         try {
-            // 1. Create Order
             const deliveryDateSQL = formatToSQLDate(nextDeliveryDate);
 
-            const { data: orderData, error: orderError } = await supabase
-                .from("orders")
-                .insert({
-                    customer_name: customerName,
-                    customer_email: customerEmail,
-                    customer_phone: customerPhone,
-                    contact_channel: contactChannel,
-                    delivery_date: deliveryDateSQL,
-                    payment_method: paymentMethod,
-                    status: 'Pendente', // New Default status
-                    total_amount: cartTotal
-                })
-                .select()
-                .single();
+            const { data, error: orderError } = await supabase.rpc("place_order", {
+                p_customer_name: customerName,
+                p_customer_email: customerEmail,
+                p_customer_phone: customerPhone,
+                p_contact_channel: contactChannel,
+                p_delivery_date: deliveryDateSQL,
+                p_payment_method: paymentMethod,
+                p_items: cart.map((item) => ({
+                    product_id: item.id,
+                    quantity: item.quantity,
+                })),
+            });
 
             if (orderError) throw orderError;
 
-            // 2. Create Order Items
-            const orderItemsToInsert = cart.map((item) => ({
-                order_id: orderData.id,
-                product_id: item.id,
-                quantity: item.quantity,
-                price_at_purchase: item.price,
-            }));
+            const result = Array.isArray(data) ? data[0] : data;
+            if (!result || typeof result.order_id !== "string" || typeof result.access_token !== "string") {
+                throw new Error("The order API returned an invalid response");
+            }
 
-            const { error: itemsError } = await supabase
-                .from("order_items")
-                .insert(orderItemsToInsert);
-
-            if (itemsError) throw itemsError;
-
-            // Success
-            setOrderSuccess(orderData.id);
+            setOrderSuccess({
+                orderId: result.order_id,
+                accessToken: result.access_token,
+            });
             setCart([]);
             setIsCheckoutOpen(false);
         } catch (error) {
@@ -151,7 +146,7 @@ export function Products() {
                             <p className="mb-4">Guarde o link abaixo para acompanhar ou cancelar o seu pedido:</p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                                 <a
-                                    href={`/pedido/${orderSuccess}`}
+                                    href={`/pedido/${orderSuccess.orderId}#token=${encodeURIComponent(orderSuccess.accessToken)}`}
                                     className="px-6 py-2 bg-black text-white hover:bg-gray-800 transition font-bold"
                                 >
                                     Acompanhar Pedido
@@ -350,7 +345,7 @@ export function Products() {
                                     <label className="block text-sm font-bold mb-2">Método de Pagamento</label>
                                     <select
                                         value={paymentMethod}
-                                        onChange={e => setPaymentMethod(e.target.value as any)}
+                                        onChange={e => setPaymentMethod(e.target.value as "PIX" | "Pagamento na Entrega")}
                                         className="w-full border border-gray-300 p-3 bg-white focus:outline-none focus:border-black"
                                     >
                                         <option value="PIX">PIX (Chave será enviada no WhatsApp)</option>
