@@ -63,7 +63,7 @@ AS $$
   );
 $$;
 
-REVOKE ALL ON FUNCTION public.is_admin() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.is_admin() FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.is_admin() TO authenticated;
 
 CREATE POLICY "Admins can read their membership"
@@ -349,7 +349,7 @@ BEGIN
 END;
 $$;
 
-REVOKE ALL ON FUNCTION public.log_order_status_change() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.log_order_status_change() FROM PUBLIC, anon, authenticated;
 
 DROP TRIGGER IF EXISTS trigger_log_order_status_change ON public.orders;
 CREATE TRIGGER trigger_log_order_status_change
